@@ -17,7 +17,6 @@ const generateToken = () => {
   return Math.random().toString(36).substr(2, 9);
 };
 
-// share function
 const share = async () => {
   try {
     const token = generateToken();
@@ -37,23 +36,24 @@ shareButton.addEventListener('click', () => {
   share();
 });
 
-// check if a token is present in the URL parameters
+// check if a message and token are present in the URL parameters
 const urlParams = new URLSearchParams(window.location.search);
+const message = urlParams.get('message');
 const token = urlParams.get('token');
 
-if (token) {
-  // if a token is present, check if the token has been viewed before
+if (message && token) {
+  // if a message and token are present, check if the token is valid
   const viewedToken = localStorage.getItem(token);
 
   if (viewedToken === null) {
-    // if the token has not been viewed before, show the message and store the token in local storage
-    messageElement.innerText = 'Enter your message here';
+    // if the token is valid, show the message and store the token in local storage
+    messageElement.innerText = message;
     localStorage.setItem(token, true);
   } else {
     // if the token has already been viewed, show the default message
     messageElement.innerText = 'Enter your message here';
   }
 } else {
-  // if no token is present, show the default message
+  // if no message or token are present, show the default message
   messageElement.innerText = 'Enter your message here';
 }
