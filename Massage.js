@@ -1,20 +1,3 @@
-
-const urlParams = new URLSearchParams(window.location.search);
-const type = urlParams.get('type');
-const token = urlParams.get('token');
-
-if (type === 'link' && token) {
-  // hide the message element if the type is link
-  messageElement.style.display = 'none';
-} else if (message && token) {
-  // show the message on the card if the type is not link and a message and token are present
-  messageElement.innerText = message;
-  localStorage.setItem(token, true);
-} else {
-  // show the default message if no message or token are present
-  messageElement.innerText = 'Enter your message here';
-}
-
 // get elements
 const cardElement = document.getElementById('card');
 const messageElement = document.getElementById('message');
@@ -38,8 +21,7 @@ const generateToken = () => {
 shareButton.addEventListener('click', () => {
   // generate a new token and create a share link with the message and token in the query parameters
   const token = generateToken();
-  const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}&type=link`;
-
+  const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&token=${encodeURIComponent(token)}`;
 
   // show share dialog if supported, otherwise prompt user to copy the link
   if (navigator.share) {
