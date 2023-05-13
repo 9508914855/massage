@@ -6,10 +6,10 @@ const shareButton = document.getElementById('share-button');
 
 // add click event listener to shake button
 shakeButton.addEventListener('click', () => {
-  cardElement.classList.add('shake');
-  setTimeout(() => {
-    cardElement.classList.remove('shake');
-  }, 1000);
+    cardElement.classList.add('shake');
+    setTimeout(() => {
+        cardElement.classList.remove('shake');
+    }, 1000);
 });
 
 // generate a random token and store it in local storage
@@ -17,23 +17,23 @@ const generateToken = () => {
   return Math.random().toString(36).substr(2, 9);
 };
 
-const share = async () => {
-  try {
-    const token = generateToken();
-    const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}`;
-    await navigator.share({
-      title: 'Custom Message Card',
-      text: 'Check out this custom message card',
-      url: shareUrl
-    });
-  } catch (err) {
-    alert('Sharing is not supported on this device.');
-  }
-};
-
 // add click event listener to share button
 shareButton.addEventListener('click', () => {
-  share();
+  // generate a new token and create a share link with the message and token in the query parameters
+  const token = generateToken();
+  const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}&type=link`;
+
+
+  // show share dialog if supported, otherwise prompt user to copy the link
+  if (navigator.share) {
+    navigator.share({
+      title: 'Custom Message Card',
+      text: messageElement.innerText,
+      url: shareUrl,
+    });
+  } else {
+    prompt('Copy this URL and share it with others:', shareUrl);
+  }
 });
 
 // check if a message and token are present in the URL parameters
