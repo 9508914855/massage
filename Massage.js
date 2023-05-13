@@ -21,7 +21,8 @@ const generateToken = () => {
 shareButton.addEventListener('click', () => {
   // generate a new token and create a share link with the message and token in the query parameters
   const token = generateToken();
-  const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&token=${encodeURIComponent(token)}`;
+  const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}`;
+
 
   // show share dialog if supported, otherwise prompt user to copy the link
   if (navigator.share) {
