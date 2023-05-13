@@ -23,20 +23,17 @@ shareButton.addEventListener('click', () => {
   const token = generateToken();
   const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&token=${encodeURIComponent(token)}`;
 
-  // create share function
-  const share = async () => {
-  try {
-  const token = generateToken();
-  const shareUrl = `${window.location.origin}${window.location.pathname}?t=${token}`;
-  await navigator.share({
-  title: 'Custom Message Card',
-  text: 'Check out this custom message card',
-  url: shareUrl
-  });
-  } catch (err) {
-  alert('Sharing is not supported on this device.');
+  // show share dialog if supported, otherwise prompt user to copy the link
+  if (navigator.share) {
+    navigator.share({
+      title: 'Custom Message Card',
+      text: messageElement.innerText,
+      url: shareUrl,
+    });
+  } else {
+    prompt('Copy this URL and share it with others:', shareUrl);
   }
-  };
+});
 
 // check if a message and token are present in the URL parameters
 const urlParams = new URLSearchParams(window.location.search);
