@@ -17,13 +17,10 @@ const generateToken = () => {
   return Math.random().toString(36).substr(2, 9);
 };
 
-// generate a new token and create a share link with the token in the query parameters
-const token = generateToken();
-const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}`;
-
-// create share function
 const share = async () => {
   try {
+    const token = generateToken();
+    const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}`;
     await navigator.share({
       title: 'Custom Message Card',
       text: 'Check out this custom message card',
@@ -33,6 +30,7 @@ const share = async () => {
     alert('Sharing is not supported on this device.');
   }
 };
+
 
 
 
