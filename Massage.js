@@ -2,15 +2,7 @@
 const cardElement = document.getElementById('card');
 const messageElement = document.getElementById('message');
 const shakeButton = document.getElementById('shake-button');
-const shareButton = document.getElementById('share-button');
 
-// add click event listener to shake button
-shakeButton.addEventListener('click', () => {
-    cardElement.classList.add('shake');
-    setTimeout(() => {
-        cardElement.classList.remove('shake');
-    }, 1000);
-});
 
 // generate a random token and store it in local storage
 const generateToken = () => {
@@ -26,7 +18,7 @@ shareButton.addEventListener('click', () => {
   // show share dialog if supported, otherwise prompt user to copy the link
   if (navigator.share) {
     navigator.share({
-      title: 'A New Message For You 👇',
+      title: 'A New Message For You 👇', 
       text: 'Click 👉 ',
       url: shareUrl,
     });
