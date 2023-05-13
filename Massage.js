@@ -18,8 +18,22 @@ const generateToken = () => {
 };
 
 // generate a new token and create a share link with the token in the query parameters
-const token = generateToken(); 
+const token = generateToken();
 const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}`;
+
+// create share function
+const share = async () => {
+  try {
+    await navigator.share({
+      title: 'Custom Message Card',
+      text: 'Check out this custom message card',
+      url: shareUrl
+    });
+  } catch (err) {
+    alert('Sharing is not supported on this device.');
+  }
+};
+
 
 
   // show share dialog if supported, otherwise prompt user to copy the link
