@@ -17,11 +17,10 @@ const generateToken = () => {
   return Math.random().toString(36).substr(2, 9);
 };
 
-// add click event listener to share button
-shareButton.addEventListener('click', () => {
-  // generate a new token and create a share link with the message and token in the query parameters
-  const token = generateToken();
-  const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&token=${encodeURIComponent(token)}`;
+// generate a new token and create a share link with the token in the query parameters
+const token = generateToken(); 
+const shareUrl = `${window.location.origin}${window.location.pathname}?token=${encodeURIComponent(token)}`;
+
 
   // show share dialog if supported, otherwise prompt user to copy the link
   if (navigator.share) {
