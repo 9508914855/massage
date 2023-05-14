@@ -36,15 +36,19 @@ body {
 			margin-bottom: 20px;
 		}
 
-		button {
-			background-color: #4CAF50;
-			color: white;
-			padding: 10px 20px;
-			border: none;
-			border-radius: 5px;
-			cursor: pointer;
-			margin-right: 0px;
-			transition: transform 0.2s ease-out;
+		button { 
+		background-color: #222; 
+		color: white; 
+		padding: 10px; 
+		border: none; 
+		border-radius: 5px; 
+		cursor: pointer; 
+		margin-right: 0px; 
+		float: right;
+		transition: transform 0.2s ease-out;
+
+		button:hover {
+			transform: translateY(-5px);
 		}
 
 		button:hover {
