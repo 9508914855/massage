@@ -27,7 +27,7 @@ shareButton.addEventListener('click', () => {
   if (navigator.share) {
     navigator.share({
       title: 'Custom Message Card',
-      text: 'Click:-',
+      text: 'Click👉',
       url: shareUrl,
     });
   } else {
