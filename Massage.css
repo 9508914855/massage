@@ -1,4 +1,4 @@
-body {
+		body {
 			background-color: #111;
 		}
 
@@ -46,12 +46,14 @@ body {
 		margin-right: 0px; 
 		float: right;
 		transition: transform 0.2s ease-out;
-}
 
 		button:hover {
 			transform: translateY(-5px);
 		}
 
-		button:hover {
-			transform: translateY(-5px);
+		.share-button i {
+		font-size: 24px; /* set your desired size */
+		color: #555; /* set your desired color */
+		margin-right: 5px; /* optional: add some spacing between the icon and any adjacent text */
 		}
+		
