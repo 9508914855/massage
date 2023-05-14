@@ -26,8 +26,8 @@ shareButton.addEventListener('click', () => {
   // show share dialog if supported, otherwise prompt user to copy the link
   if (navigator.share) {
     navigator.share({
-      title: 'A New Message For You 👇', 
-      text: 'Click 👉 ',
+      title: 'Custom Message Card',
+      text: 'Click:-',
       url: shareUrl,
     });
   } else {
