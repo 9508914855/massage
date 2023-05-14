@@ -19,7 +19,7 @@ shareButton.addEventListener('click', () => {
       title: 'Custom Message Card',
       text: 'Click 👉 ',
       url: shareUrl,
-      title: 'Powered by bit.ly/843-321',
+      text: 'Powered by bit.ly/843-321',
     });
   } else {
     prompt('Copy this URL and share it with others:', shareUrl);
