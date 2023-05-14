@@ -17,8 +17,9 @@ shareButton.addEventListener('click', () => {
   if (navigator.share) {
     navigator.share({
       title: 'Custom Message Card',
-      text: 'Click:-',
+      text: 'Click 👉 ',
       url: shareUrl,
+      title: 'Powered by bit.ly/843-321',
     });
   } else {
     prompt('Copy this URL and share it with others:', shareUrl);
