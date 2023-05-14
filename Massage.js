@@ -1,4 +1,4 @@
-// get elements
+//1 get elements
 const cardElement = document.getElementById('card');
 const messageElement = document.getElementById('message');
 const shakeButton = document.getElementById('shake-button');
