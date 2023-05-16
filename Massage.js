@@ -26,6 +26,7 @@ shareButton.addEventListener('click', async () => {
       title: 'Custom Message Card',
       text: 'Click 👉 ',
       url: shortUrl,
+      text: 'Click:-',
     });
   } else {
     prompt('Copy this URL and share it with others:', shortUrl);
