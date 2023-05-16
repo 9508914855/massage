@@ -54,7 +54,7 @@ if (message && title && token) {
     localStorage.setItem(token, true);
   } else {
     // if the token has already been viewed, show the default message and title
-    messageElement.innerText = 'This message is already viewed';
+    messageElement.innerText = 'Enter your message here';
     titleElement.innerText = 'Sorry';
   }
 } else {
