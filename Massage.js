@@ -6,8 +6,11 @@ const generateToken = () => {
 // Shorten URL using base64 encoding
 const shortenUrl = (url) => {
   const encodedUrl = btoa(url);
-  return encodedUrl.substring(0, 8);
+  const encodedUrlWithoutPadding = encodedUrl.replace(/=+$/, ''); // Remove trailing padding characters (=)
+  const shortenedUrl = encodedUrlWithoutPadding.substring(0, 8);
+  return shortenedUrl;
 };
+
 
 // Get DOM elements
 const shareButton = document.getElementById('share-button');
