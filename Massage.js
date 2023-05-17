@@ -39,3 +39,87 @@ function createLink() {
     message.textContent = "";
   });
 }
+
+// Generate a random encryption key
+function generateEncryptionKey() {
+  return window.crypto.subtle.generateKey(
+    {
+      name: 'AES-GCM',
+      length: 256
+    },
+    true,
+    ['encrypt', 'decrypt']
+  );
+}
+
+// Encrypt the message using the encryption key
+function encryptMessage(message, encryptionKey) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+  return window.crypto.subtle.encrypt(
+    {
+      name: 'AES-GCM',
+      iv: iv
+    },
+    encryptionKey,
+    data
+  ).then(ciphertext => {
+    const encryptedMessage = {
+      iv: Array.from(iv),
+      ciphertext: Array.from(new Uint8Array(ciphertext))
+    };
+    return encryptedMessage;
+  });
+}
+
+// Decrypt the encrypted message using the encryption key
+function decryptMessage(encryptedMessage, encryptionKey) {
+  const { iv, ciphertext } = encryptedMessage;
+
+  return window.crypto.subtle.decrypt(
+    {
+      name: 'AES-GCM',
+      iv: new Uint8Array(iv)
+    },
+    encryptionKey,
+    new Uint8Array(ciphertext)
+  ).then(decryptedData => {
+    const decoder = new TextDecoder();
+    const decryptedMessage = decoder.decode(decryptedData);
+    return decryptedMessage;
+  });
+}
+
+// Generate a random token
+function generateToken() {
+  return Math.random().toString(36).substr(2, 9);
+}
+
+// Generate or load encryption key based on the token
+function generateOrLoadEncryptionKey(token) {
+  const storedEncryptionKey = localStorage.getItem(token);
+
+  if (storedEncryptionKey) {
+    const keyData = JSON.parse(storedEncryptionKey);
+    const keyUsages = ['encrypt', 'decrypt'];
+
+    return window.crypto.subtle.importKey(
+      'jwk',
+      keyData,
+      { name: 'AES-GCM' },
+      true,
+      keyUsages
+    );
+  } else {
+    return generateEncryptionKey().then(key => {
+      const keyData = JSON.stringify(key);
+      localStorage.setItem(token, keyData);
+      return key;
+    });
+  }
+}
+
+// Add click event listener
