@@ -4,7 +4,7 @@ const generateToken = (message) => {
   return hash.substring(0, 8);
 };
 
-// Add click event listener to share button
+// Add click event2 listener to share button
 shareButton.addEventListener('click', () => {
   const message = messageElement.innerText;
   const title = titleElement.innerText;
