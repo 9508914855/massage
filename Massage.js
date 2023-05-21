@@ -1,125 +1,64 @@
-// This script creates a one-time message viewer.
-
-// Get the elements.
-var infoButton = document.getElementById("info-button");
-var card = document.getElementById("card");
-var title = document.getElementById("title");
-var message = document.getElementById("message");
-var shareButton = document.getElementById("share-button");
-var linkContainer = document.getElementById("link-container");
-
-// Set up the event listeners.
-infoButton.addEventListener("click", showInfo);
-shareButton.addEventListener("click", createLink);
-
-// This function shows the information about the one-time message viewer.
-function showInfo() {
-  var info = `
-    <h2>One-time message viewer</h2>
-    <p>This is a one-time message viewer. You can enter a message and then click the "Share" button to generate a link. The link will only work once.</p>
-    <p>The message will be deleted after it has been viewed.</p>
-  `;
-
-  var infoDiv = document.createElement("div");
-  infoDiv.innerHTML = info;
-  card.appendChild(infoDiv);
-}
-
-// This function creates a link to the one-time message.
-function createLink() {
-  var messageText = title.textContent + ": " + message.textContent;
-  var link = document.createElement("a");
-  link.href = "/message/" + encodeURIComponent(messageText);
-  link.textContent = "View message";
-  linkContainer.appendChild(link);
-
-  // Delete the message after it has been viewed.
-  link.addEventListener("click", function() {
-    title.textContent = "";
-    message.textContent = "";
-  });
-}
-
-// Generate a random encryption key
-function generateEncryptionKey() {
-  return window.crypto.subtle.generateKey(
-    {
-      name: 'AES-GCM',
-      length: 256
-    },
-    true,
-    ['encrypt', 'decrypt']
-  );
-}
-
-// Encrypt the message using the encryption key
-function encryptMessage(message, encryptionKey) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(message);
-
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
-
-  return window.crypto.subtle.encrypt(
-    {
-      name: 'AES-GCM',
-      iv: iv
-    },
-    encryptionKey,
-    data
-  ).then(ciphertext => {
-    const encryptedMessage = {
-      iv: Array.from(iv),
-      ciphertext: Array.from(new Uint8Array(ciphertext))
-    };
-    return encryptedMessage;
-  });
-}
-
-// Decrypt the encrypted message using the encryption key
-function decryptMessage(encryptedMessage, encryptionKey) {
-  const { iv, ciphertext } = encryptedMessage;
-
-  return window.crypto.subtle.decrypt(
-    {
-      name: 'AES-GCM',
-      iv: new Uint8Array(iv)
-    },
-    encryptionKey,
-    new Uint8Array(ciphertext)
-  ).then(decryptedData => {
-    const decoder = new TextDecoder();
-    const decryptedMessage = decoder.decode(decryptedData);
-    return decryptedMessage;
-  });
-}
-
-// Generate a random token
-function generateToken() {
-  return Math.random().toString(36).substr(2, 9);
-}
-
-// Generate or load encryption key based on the token
-function generateOrLoadEncryptionKey(token) {
-  const storedEncryptionKey = localStorage.getItem(token);
-
-  if (storedEncryptionKey) {
-    const keyData = JSON.parse(storedEncryptionKey);
-    const keyUsages = ['encrypt', 'decrypt'];
-
-    return window.crypto.subtle.importKey(
-      'jwk',
-      keyData,
-      { name: 'AES-GCM' },
-      true,
-      keyUsages
-    );
-  } else {
-    return generateEncryptionKey().then(key => {
-      const keyData = JSON.stringify(key);
-      localStorage.setItem(token, keyData);
-      return key;
-    });
-  }
-}
-
-// Add click event listener
+const cardElement = document.getElementById('card'); 
+ const messageElement = document.getElementById('message'); 
+ const titleElement = document.getElementById('title'); 
+ const shareButton = document.getElementById('share-button'); 
+ const infoButton = document.getElementById('info-button'); 
+  
+ // generate a random token and store it in local storage 
+ const generateToken = () => { 
+   return Math.random().toString(36).substr(2, 9); 
+ }; 
+  
+ // add click event listener to share button 
+ shareButton.addEventListener('click', async () => { 
+   // generate a new token and create a share link with the message, title, and token in the query parameters 
+   const token = generateToken(); 
+   const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`; 
+  
+   // shorten the shareUrl using TinyURL API 
+   const apiEndpoint = 'https://tinyurl.com/api-create.php'; 
+   const response = await fetch(`${apiEndpoint}?url=${encodeURIComponent(shareUrl)}`); 
+   const shortUrl = await response.text(); 
+  
+   // show share dialog if supported, otherwise prompt user to copy the link 
+   if (navigator.share) { 
+     navigator.share({ 
+       title: 'Custom Message Card', 
+       text: 'Click 👉 ', 
+       url: shortUrl, 
+     }); 
+   } else { 
+     prompt('Copy this URL and share it with others:', shortUrl); 
+   } 
+ }); 
+  
+ // add click event listener to info button 
+ infoButton.addEventListener('click', () => { 
+   alert('Introducing the latest tool by Shashi: the One-Time Message Sender. Iss tool ki madad se aap kisi ko message bhej sakte ho, jo sirf ek baar dikhayi dega, phir hamesha ke liye delete ho jaayega. Yeh tool sensitive information aur private conversations ke liye accha option hai.'); 
+ }); 
+  
+ // check if a message, title, and token are present in the URL parameters 
+ const urlParams = new URLSearchParams(window.location.search); 
+ const message = urlParams.get('message'); 
+ const title = urlParams.get('title'); 
+ const token = urlParams.get('token'); 
+  
+ if (message && title && token) { 
+   // if a message, title, and token are present, check if the token is valid 
+   const viewedToken = localStorage.getItem(token); 
+  
+   if (viewedToken === null) { 
+     // if the token is valid, show the message and title and store the token in local storage 
+     messageElement.innerText = message; 
+     titleElement.innerText = title; 
+     localStorage.setItem(token, true); 
+   } else { 
+     // if the token has already been viewed, show the default message and title 
+     messageElement.innerText = 'This message has been already viewed. Tap to edit and send.'; 
+     titleElement.innerText = 'Sorry'; 
+   } 
+ } else { 
+   // if no message, title, or token are present, show the default message and title 
+   messageElement.innerText = 'Enter your message here'; 
+   titleElement.innerText = 'Enter Your Name'; 
+ }
