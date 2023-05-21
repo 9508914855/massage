@@ -15,8 +15,29 @@
   </script>
 
   <link rel="stylesheet" type="text/css" href="Massage.css">
+
+  <link rel="stylesheet" type="text/css" href="https://github.com/9508914855/Protect/blob/main/protect.css">
+
+
 </head>
 <body>
+
+  <div id="overlay"></div> 
+   <div id="passwordBox" class="modal"> 
+     <div class="modal-content"> 
+       <h2>Enter Password</h2> 
+       <input type="password" id="passwordInput" placeholder="Password" /> 
+       <label for="rememberMeCheckbox"> 
+         <input type="checkbox" id="rememberMeCheckbox"> Remember Me 
+       </label> 
+       <button onclick="checkPassword()">Submit</button> 
+       <p id="errorMessage" class="error-message"></p> 
+ <div class="watermark"> 
+     Powered by <a href="https://9508914855.github.io/link-tree/">Shashi Kumar</a> 
+     </div> 
+     </div> 
+   </div> 
+ 
   <button id="info-button" class="info-button">ⓘ</button>
   <div class="card">
     <h1 id="title" contenteditable="true">Enter Your Name</h1>
@@ -30,5 +51,7 @@
   </div>
 
   <script src="Massage.js"></script>
+  <script src="https://github.com/9508914855/Protect/blob/main/protect.js"></script>
+
 </body>
 </html>
