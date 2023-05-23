@@ -67,15 +67,13 @@ const cardElement = document.getElementById('card');
 
 
 
-function checkPassword() {
-  var password = "#843321"; // Replace with your desired password
-  var passwordInput = document.getElementById("passwordInput");
-
-  if (passwordInput.value === password) {
-    // Send a message to the parent window indicating the password is correct
-    window.parent.postMessage({ passwordCorrect: true }, '*');
-  } else {
-    // Send a message to the parent window indicating the password is incorrect
-    window.parent.postMessage({ passwordCorrect: false }, '*');
+window.addEventListener('message', function (event) {
+  if (event.data && event.data.passwordCorrect === true) {
+    // Remove the iframe from the main website
+    var iframe = document.getElementById('passwordToolIframe');
+    if (iframe) {
+      iframe.remove();
+      // Perform other actions after removing the iframe
+    }
   }
-}
+});
