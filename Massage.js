@@ -67,13 +67,4 @@ const cardElement = document.getElementById('card');
 
 
 
-window.addEventListener('message', function (event) {
-  if (event.data && event.data.passwordCorrect === true) {
-    // Remove the iframe from the main website
-    var iframe = document.getElementById('passwordToolIframe');
-    if (iframe) {
-      iframe.remove();
-      // Perform other actions after removing the iframe
-    }
-  }
-});
+
