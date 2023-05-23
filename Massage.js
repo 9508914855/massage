@@ -62,3 +62,20 @@ const cardElement = document.getElementById('card');
    messageElement.innerText = 'Enter your message here'; 
    titleElement.innerText = 'Enter Your Name'; 
  }
+
+
+
+
+
+function checkPassword() {
+  var password = "#843321"; // Replace with your desired password
+  var passwordInput = document.getElementById("passwordInput");
+
+  if (passwordInput.value === password) {
+    // Send a message to the parent window indicating the password is correct
+    window.parent.postMessage({ passwordCorrect: true }, '*');
+  } else {
+    // Send a message to the parent window indicating the password is incorrect
+    window.parent.postMessage({ passwordCorrect: false }, '*');
+  }
+}
