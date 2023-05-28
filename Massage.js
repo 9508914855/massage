@@ -15,10 +15,19 @@ const cardElement = document.getElementById('card');
    const token = generateToken(); 
    const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`; 
   
-   // shorten the shareUrl using TinyURL API 
-   const apiEndpoint = 'https://tinyurl.com/api-create.php'; 
-   const response = await fetch(`${apiEndpoint}?url=${encodeURIComponent(shareUrl)}`); 
-   const shortUrl = await response.text(); 
+  // shorten the shareUrl using your custom API
+  const apiEndpoint = 'https://your-api-endpoint.com/shorten';
+  const response = await fetch(apiEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ longUrl: shareUrl }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    const shortUrl = data.shortUrl;
   
    // show share dialog if supported, otherwise prompt user to copy the link 
    if (navigator.share) { 
