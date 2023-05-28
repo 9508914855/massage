@@ -15,8 +15,8 @@ const cardElement = document.getElementById('card');
    const token = generateToken(); 
    const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`; 
   
-  // shorten the shareUrl using your custom API
-  const apiEndpoint = 'https://your-api-endpoint.com/shorten';
+ // shorten the shareUrl using your custom API
+  const apiEndpoint = 'https://bitelink.000webhostapp.com/shorten.php';
   const response = await fetch(apiEndpoint, {
     method: 'POST',
     headers: {
