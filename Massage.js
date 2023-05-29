@@ -17,36 +17,33 @@ shareButton.addEventListener('click', async () => {
     messageElement.innerText
   )}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`;
 
-  try {
-    // shorten the shareUrl using the bitelink API
-    const apiUrl = 'https://bitelink.000webhostapp.com/api.php';
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `url=${encodeURIComponent(shareUrl)}`,
-    });
+  // make a POST request to the API endpoint
+  const response = await fetch('https://bitelink.000webhostapp.com/api.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ longUrl: shareUrl }),
+  });
 
-    if (!response.ok) {
-      throw new Error('Failed to shorten URL');
-    }
+  if (response.ok) {
+    const shortUrl = await response.text();
 
-    const shortUrlData = await response.text();
-
-    // show share dialog if supported, otherwise prompt user to copy the link
     if (navigator.share) {
-      navigator.share({
-        title: 'Custom Message Card',
-        text: 'Click 👉 ',
-        url: shortUrlData,
-      });
+      navigator
+        .share({
+          title: 'Custom Message Card',
+          text: 'Click 👉 ',
+          url: shortUrl,
+        })
+        .catch(function (error) {
+          prompt('Copy this URL and share it with others:', shortUrl);
+        });
     } else {
-      prompt('Copy this URL and share it with others:', shortUrlData);
+      prompt('Copy this URL and share it with others:', shortUrl);
     }
-  } catch (error) {
-    console.error(error);
-    alert('Failed to generate short URL. Please try again later.');
+  } else {
+    console.error('Failed to generate short URL. Error: ' + response.status);
   }
 });
 
@@ -74,7 +71,7 @@ if (message && title && token) {
     localStorage.setItem(token, true);
   } else {
     // if the token has already been viewed, show the default message and title
-    messageElement.innerText = 'This message has already been viewed. Tap to edit and send.';
+    messageElement.innerText = 'This message has been already viewed. Tap to edit and send.';
     titleElement.innerText = 'Sorry';
   }
 } else {
