@@ -18,30 +18,39 @@ shareButton.addEventListener('click', async () => {
   )}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`;
 
   // send a request to the API to shorten the shareUrl
-  const response = await fetch('https://bitelink.000webhostapp.com/api.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: `longUrl=${encodeURIComponent(shareUrl)}`
-  });
+  try {
+    const apiUrl = 'https://bitelink.000webhostapp.com/api.php'; // Replace with your actual API endpoint URL
 
-  const data = await response.json();
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `longUrl=${encodeURIComponent(shareUrl)}`,
+    });
 
-  if (data.status === 'success') {
-    const shortUrl = data.shortUrl;
-
-    // show share dialog if supported, otherwise prompt user to copy the link
-    if (navigator.share) {
-      navigator.share({
-        title: 'Custom Message Card',
-        text: 'Click 👉 ',
-        url: shortUrl
-      });
+    if (response.ok) {
+      const data = await response.json();
+      if (data.status === 'success') {
+        const shortUrl = data.shortUrl;
+        // show share dialog if supported, otherwise prompt user to copy the link
+        if (navigator.share) {
+          navigator.share({
+            title: 'Custom Message Card',
+            text: 'Click 👉 ',
+            url: shortUrl,
+          });
+        } else {
+          prompt('Copy this URL and share it with others:', shortUrl);
+        }
+      } else {
+        throw new Error(data.message);
+      }
     } else {
-      prompt('Copy this URL and share it with others:', shortUrl);
+      throw new Error('Failed to shorten the URL.');
     }
-  } else {
+  } catch (error) {
+    console.error('Error:', error.message);
     alert('Error: Failed to shorten the URL.');
   }
 });
@@ -70,11 +79,7 @@ if (message && title && token) {
     localStorage.setItem(token, true);
   } else {
     // if the token has already been viewed, show the default message and title
-    messageElement.innerText = 'This message has been already viewed. Tap to edit and send.';
+    messageElement.innerText = 'This message has already been viewed. Tap to edit and send.';
     titleElement.innerText = 'Sorry';
   }
-} else {
-  // if no message, title, or token are present, show the default message and title
-  messageElement.innerText = 'Enter your message here';
-  titleElement.innerText = 'Enter Your Name';
 }
