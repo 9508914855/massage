@@ -19,34 +19,36 @@ shareButton.addEventListener('click', async () => {
 
   try {
     // Send a request to the URL shortening API to shorten the shareUrl
-    $.ajax({
-      url: "https://bitelink.000webhostapp.com/api.php",
-      type: "POST",
-      dataType: "json",
-      data: JSON.stringify({ longUrl: shareUrl }),
-      contentType: "application/json",
-      success: function(response) {
-        if (response.status === "success") {
-          const shortUrl = response.shortUrl;
-
-          // show share dialog if supported, otherwise prompt user to copy the link
-          if (navigator.share) {
-            navigator.share({
-              title: 'Custom Message Card',
-              text: 'Click 👉 ',
-              url: shortUrl,
-            });
-          } else {
-            prompt('Copy this URL and share it with others:', shortUrl);
-          }
-        } else {
-          document.getElementById("shortUrl").innerHTML = "Error: " + response.message;
-        }
+    const response = await fetch("https://bitelink.000webhostapp.com/api.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      error: function(jqXHR, textStatus, errorThrown) {
-        document.getElementById("shortUrl").innerHTML = "Error: " + textStatus;
-      }
+      body: JSON.stringify({ longUrl: shareUrl }),
     });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.status === "success") {
+        const shortUrl = data.shortUrl;
+
+        // show share dialog if supported, otherwise prompt user to copy the link
+        if (navigator.share) {
+          navigator.share({
+            title: 'Custom Message Card',
+            text: 'Click 👉 ',
+            url: shortUrl,
+          });
+        } else {
+          prompt('Copy this URL and share it with others:', shortUrl);
+        }
+      } else {
+        throw new Error(data.message);
+      }
+    } else {
+      throw new Error('Failed to shorten the URL.');
+    }
   } catch (error) {
     console.error('Error:', error.message);
     alert('Error: Failed to shorten the URL.');
