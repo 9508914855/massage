@@ -19,35 +19,25 @@ shareButton.addEventListener('click', async () => {
 
   try {
     // Send a request to the URL shortening API to shorten the shareUrl
-    const response = await fetch("https://bitelink.000webhostapp.com/api.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ longUrl: shareUrl }),
+    const response = await axios.post("https://bitelink.000webhostapp.com/api.php", {
+      longUrl: shareUrl,
     });
 
-    if (response.ok) {
-      const data = await response.json();
+    if (response.data.status === "success") {
+      const shortUrl = response.data.shortUrl;
 
-      if (data.status === "success") {
-        const shortUrl = data.shortUrl;
-
-        // show share dialog if supported, otherwise prompt user to copy the link
-        if (navigator.share) {
-          navigator.share({
-            title: 'Custom Message Card',
-            text: 'Click 👉 ',
-            url: shortUrl,
-          });
-        } else {
-          prompt('Copy this URL and share it with others:', shortUrl);
-        }
+      // show share dialog if supported, otherwise prompt user to copy the link
+      if (navigator.share) {
+        navigator.share({
+          title: 'Custom Message Card',
+          text: 'Click 👉 ',
+          url: shortUrl,
+        });
       } else {
-        throw new Error(data.message);
+        prompt('Copy this URL and share it with others:', shortUrl);
       }
     } else {
-      throw new Error('Failed to shorten the URL.');
+      throw new Error(response.data.message);
     }
   } catch (error) {
     console.error('Error:', error.message);
