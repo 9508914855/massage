@@ -17,38 +17,36 @@ shareButton.addEventListener('click', async () => {
     messageElement.innerText
   )}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`;
 
-  // send a request to the API to shorten the shareUrl
   try {
-    const apiUrl = 'https://bitelink.000webhostapp.com/api.php'; // Replace with your actual API endpoint URL
+    // Send a request to the URL shortening API to shorten the shareUrl
+    $.ajax({
+      url: "https://bitelink.000webhostapp.com/api.php",
+      type: "POST",
+      dataType: "json",
+      data: JSON.stringify({ longUrl: shareUrl }),
+      contentType: "application/json",
+      success: function(response) {
+        if (response.status === "success") {
+          const shortUrl = response.shortUrl;
 
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `longUrl=${encodeURIComponent(shareUrl)}`,
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.status === 'success') {
-        const shortUrl = data.shortUrl;
-        // show share dialog if supported, otherwise prompt user to copy the link
-        if (navigator.share) {
-          navigator.share({
-            title: 'Custom Message Card',
-            text: 'Click 👉 ',
-            url: shortUrl,
-          });
+          // show share dialog if supported, otherwise prompt user to copy the link
+          if (navigator.share) {
+            navigator.share({
+              title: 'Custom Message Card',
+              text: 'Click 👉 ',
+              url: shortUrl,
+            });
+          } else {
+            prompt('Copy this URL and share it with others:', shortUrl);
+          }
         } else {
-          prompt('Copy this URL and share it with others:', shortUrl);
+          document.getElementById("shortUrl").innerHTML = "Error: " + response.message;
         }
-      } else {
-        throw new Error(data.message);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        document.getElementById("shortUrl").innerHTML = "Error: " + textStatus;
       }
-    } else {
-      throw new Error('Failed to shorten the URL.');
-    }
+    });
   } catch (error) {
     console.error('Error:', error.message);
     alert('Error: Failed to shorten the URL.');
