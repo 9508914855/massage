@@ -4,44 +4,43 @@ const titleElement = document.getElementById('title');
 const shareButton = document.getElementById('share-button');
 const infoButton = document.getElementById('info-button');
 
+// generate a random token and store it in local storage
+const generateToken = () => {
+  return Math.random().toString(36).substr(2, 9);
+};
+
 // add click event listener to share button
 shareButton.addEventListener('click', async () => {
   // generate a new token and create a share link with the message, title, and token in the query parameters
   const token = generateToken();
   const shareUrl = `${window.location.origin}${window.location.pathname}?message=${encodeURIComponent(messageElement.innerText)}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`;
 
-  try {
-    // send a POST request to the bitelink API to shorten the shareUrl
-    const response = await fetch('https://bitelink.000webhostapp.com/api.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        longUrl: shareUrl
-      })
+  // Validate the shareUrl
+  if (!shareUrl.trim()) {
+    alert('Invalid share URL');
+    return;
+  }
+
+  // send the shareUrl to your PHP script for shortening
+  const apiEndpoint = 'https://bitelink.000webhostapp.com/api.php'; // Replace with your PHP script URL
+  const response = await fetch(apiEndpoint, {
+    method: 'POST',
+    body: JSON.stringify({ longUrl: shareUrl }), // Pass the shareUrl as 'longUrl'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const shortUrl = await response.text();
+
+  // show share dialog if supported, otherwise prompt user to copy the link
+  if (navigator.share) {
+    navigator.share({
+      title: 'Custom Message Card',
+      text: 'Click 👉 ',
+      url: shortUrl,
     });
-
-    if (response.ok) {
-      const responseData = await response.json();
-      const shortUrl = responseData.shortUrl;
-
-      // show share dialog if supported, otherwise prompt user to copy the link
-      if (navigator.share) {
-        navigator.share({
-          title: 'Custom Message Card',
-          text: 'Click 👉 ',
-          url: shortUrl,
-        });
-      } else {
-        prompt('Copy this URL and share it with others:', shortUrl);
-      }
-    } else {
-      throw new Error('Failed to shorten the URL');
-    }
-  } catch (error) {
-    console.error(error);
-    alert('Error occurred while shortening the URL. Please try again later.');
+  } else {
+    prompt('Copy this URL and share it with others:', shortUrl);
   }
 });
 
@@ -74,9 +73,4 @@ if (message && title && token) {
   // if no message, title, or token are present, show the default message and title
   messageElement.innerText = 'Enter your message here';
   titleElement.innerText = 'Enter Your Name';
-}
-
-// generate a random token and store it in local storage
-function generateToken() {
-  return Math.random().toString(36).substr(2, 9);
 }
