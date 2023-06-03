@@ -30,21 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(data => {
         if (data.status === 'success') {
           const shortUrl = data.shortUrl;
-          // show share dialog if supported, otherwise prompt user to copy the link
-          if (navigator.share) {
-            try {
-              navigator.share({
-                title: 'Custom Message Card',
-                text: 'Click 👉 ',
-                url: shortUrl,
-              });
-            } catch (error) {
-              console.error('Error sharing:', error);
-              prompt('Copy this URL and share it with others:', shortUrl);
-            }
-          } else {
-            prompt('Copy this URL and share it with others:', shortUrl);
-          }
+          // auto open WhatsApp with the generated short link
+          const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+            `Click 👉 ${shortUrl}`
+          )}`;
+          window.open(whatsappUrl, '_blank');
         } else {
           alert('Error: ' + data.message);
         }
