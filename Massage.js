@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     )}&title=${encodeURIComponent(titleElement.innerText)}&token=${encodeURIComponent(token)}`;
 
     // Make a POST request to the API endpoint to shorten the URL
-    fetch('https://bitelink.000webhostapp.com/api.php', {
+    fetch('https://Shashi.000.pe/api.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
