@@ -5,10 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const shareButton = document.getElementById('share-button');
   const infoButton = document.getElementById('info-button');
 
-  // Email configuration
-  const notificationEmail = 'Contact9508914855@gmail.com';
-  const subject = 'New URL Saved';
-
   // generate a random token and store it in local storage
   const generateToken = () => {
     return Math.random().toString(36).substr(2, 9);
@@ -35,33 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.status === 'success') {
           const shortUrl = data.shortUrl;
           // auto open WhatsApp with the generated short link
-          const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-            `Click 👉 ${shortUrl}`
+          const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURI(
+          `CLICK-  ${shortUrl}`
           )}`;
           window.open(whatsappUrl, '_blank');
-
-          // Send email notification
-          const emailData = {
-            to: notificationEmail,
-            subject: subject,
-            message: `A new URL has been saved:\n\nLong URL: ${shareUrl}\nShort URL: ${shortUrl}`,
-          };
-          fetch('https://your-email-service.com/send-email', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(emailData),
-          })
-            .then(response => response.json())
-            .then(emailResponse => {
-              if (emailResponse.status !== 'success') {
-                console.error('Failed to send email notification:', emailResponse.message);
-              }
-            })
-            .catch(error => {
-              console.error('Failed to send email notification:', error.message);
-            });
+          
         } else {
           alert('Error: ' + data.message);
         }
@@ -78,5 +52,80 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   });
 
-  // Rest of the code remains the same...
+  // check if a message, title, and token are present in the URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const message = urlParams.get('message');
+  const title = urlParams.get('title');
+  const token = urlParams.get('token');
+
+  // Typing effect function for default message
+  function typingEffect() {
+    const defaultMessage = 'Enter your message here';
+    let currentText = '';
+    let index = 0;
+
+    function type() {
+      if (index < defaultMessage.length) {
+        currentText += defaultMessage.charAt(index);
+        messageElement.innerText = currentText;
+        index++;
+        setTimeout(type, Math.random() * 200 + 50); // Adjust the typing speed here
+      }
+    }
+
+    type();
+  }
+
+  // Typing effect function for error message
+  function typingErrorMessage() {
+    const errorMessage = 'This message has already been viewed. Tap to edit and send.';
+    let currentText = '';
+    let index = 0;
+
+    function type() {
+      if (index < errorMessage.length) {
+        currentText += errorMessage.charAt(index);
+        messageElement.innerText = currentText;
+        index++;
+        setTimeout(type, Math.random() * 200 + 50); // Adjust the typing speed here
+      }
+    }
+
+    type();
+  }
+
+  if (message && title && token) {
+    // if a message, title, and token are present, check if the token is valid
+    const viewedToken = localStorage.getItem(token);
+
+    if (!viewedToken) {
+      // if the token is not found in local storage, display the message and title
+      messageElement.innerText = message;
+      titleElement.innerText = title;
+
+      // store the token in local storage to mark it as viewed
+      localStorage.setItem(token, 'viewed');
+    } else {
+      // if the token is found in local storage, show an error message with typing effect
+      typingErrorMessage();
+      titleElement.innerText = 'Sorry';
+    }
+  } else {
+    // if no message, title, or token are present, show the default message and title
+    messageElement.innerText = 'Enter your message here';
+    titleElement.innerText = 'Enter Your Name';
+
+    if (!message && !title && !token) {
+      // Apply typing effect only when there are no message link parameters
+      typingEffect();
+    }
+  }
+
+  const card = document.querySelector('.card');
+
+  function toggleGlow() {
+    card.classList.toggle('disable-glow');
+  }
+
+  card.addEventListener('click', toggleGlow);
 });
